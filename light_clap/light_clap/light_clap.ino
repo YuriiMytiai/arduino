@@ -10,7 +10,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 boolean isOn = false;
 int ext_relay_pin = 12;
 
-volatile int count_inter = 0;
+volatile int count_inter = 0, delay_betw_claps = 500;
 volatile boolean change_relay_status = false;
 volatile long prev_inter_time = 0;
 volatile long cur_inter_time = 0;
@@ -53,12 +53,12 @@ void inter_func() {
   cur_inter_time = millis();
   //Serial.println(prev_inter_time);
   //Serial.println(cur_inter_time);
-  if (cur_inter_time - prev_inter_time < 300) {
+  if (cur_inter_time - prev_inter_time < delay_betw_claps) {
     //Serial.println("I'm at 1");
     prev_inter_time = cur_inter_time;
     return;
     }
-  else if ((cur_inter_time - prev_inter_time > 300) && (cur_inter_time - prev_inter_time < 1000)) {
+  else if ((cur_inter_time - prev_inter_time > delay_betw_claps) && (cur_inter_time - prev_inter_time < 1000)) {
     //Serial.println("I/m at 2");
    // Serial.println("-------------");
     prev_inter_time = cur_inter_time;
@@ -73,11 +73,11 @@ void inter_func() {
 void manage_relay(){
   if (isOn) {
         digitalWrite(ext_relay_pin, LOW);
-        turned_ON_message();
+        turned_OFF_message();
         isOn = false;
       } else {
         digitalWrite(ext_relay_pin, HIGH);
-        turned_OFF_message();
+        turned_ON_message();
         analogWrite(lp, 0);
         isOn = true;
   }
